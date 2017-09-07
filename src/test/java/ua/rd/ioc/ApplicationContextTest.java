@@ -32,7 +32,7 @@ public class ApplicationContextTest {
         //Given
         String beanName = "First bean";
         List<String> beanDescriptions = Arrays.asList(beanName);
-        Config config = new JavaMapConfig( beanDescriptions);
+        Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
         //When
         String[] actual = context.getBeanDefinitionNames();
@@ -45,7 +45,7 @@ public class ApplicationContextTest {
     public void getBeanDefinitionNamesWithEmptyBeanDefinition() throws Exception {
         //Given
         List<String> beanDescriptions = Collections.emptyList();
-        Config config = new JavaMapConfig( beanDescriptions);
+        Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
         //When
         String[] actual = context.getBeanDefinitionNames();
@@ -72,7 +72,7 @@ public class ApplicationContextTest {
     public void getBeanWithOneBeanDefinitionIsNotNull() throws Exception {
         String beanName = "First bean";
         List<String> beanDescriptions = Arrays.asList(beanName);
-        Config config = new JavaMapConfig( beanDescriptions);
+        Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
         Object bean = context.getBean(beanName);
@@ -85,7 +85,7 @@ public class ApplicationContextTest {
         String beanName = "First bean";
         Class<TestBean> beanType = TestBean.class;
 
-        //TODO  replace list woth map
+        //TODO  replace list with map
         //List<String> beanDescriptions = Arrays.asList(beanName);
         Map<String, Class<?>> beanDescriptions = new HashMap<String, Class<?>>(){{
                 put(beanName, beanType);

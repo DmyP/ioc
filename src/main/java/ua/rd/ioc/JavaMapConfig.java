@@ -1,27 +1,23 @@
 package ua.rd.ioc;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class JavaMapConfig implements Config {
-    private List<String> beanDescriptions;
+    private Map<String, Class<?>> beanDescriptions;
 
-    public JavaMapConfig(List<String> beanDescriptions) {
+    public JavaMapConfig(Map<String, Class<?>> beanDescriptions) {
         this.beanDescriptions = beanDescriptions;
     }
 
     @Override
     public BeanDefinition[] beanDefinitions() {
         BeanDefinition[] beanDefinitions =
-                beanDescriptions.stream()
-                        .map(this::getBeanDefinition)
+                beanDescriptions.entrySet().stream()
+                        .map(Map.Entry::getValue)
                         .toArray(BeanDefinition[]::new);
         return beanDefinitions;
     }
-
-    private BeanDefinition getBeanDefinition(String name) {
-        return () -> name;
-    }
-
 }
 
