@@ -1,14 +1,27 @@
 package ua.rd.ioc;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import ua.rd.exceprions.NoSuchBeanException;
 
 import java.util.*;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ApplicationContextTest {
+    private Map<String, Class<?>> beanDescriptions;
+
+    @Before
+    public void init() {
+        beanDescriptions = new HashMap<>();
+    }
+    @After
+    public void cleanUp() {
+        beanDescriptions = null;
+    }
 
     @Test(expected = NoSuchBeanException.class)
     public void getBean() throws Exception {
@@ -18,38 +31,35 @@ public class ApplicationContextTest {
 
     @Test
     public void getBeanDefinitionNamesWithEmptyContext() throws Exception {
-        //Given
+
         Context context = new ApplicationContext();
-        //When
+
         String[] actual = context.getBeanDefinitionNames();
-        //Then
+
         String[] expected = {};
         assertArrayEquals(expected, actual);
     }
 
     @Test
     public void getBeanDefinitionNamesWithOneBeanDefinition() throws Exception {
-        //Given
         String beanName = "First bean";
-        List<String> beanDescriptions = Arrays.asList(beanName);
+        beanDescriptions.put(beanName, TestBean.class);
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
-        //When
+
         String[] actual = context.getBeanDefinitionNames();
-        //Then
+
         String[] expected = {beanName};
         assertArrayEquals(expected, actual);
     }
 
     @Test
     public void getBeanDefinitionNamesWithEmptyBeanDefinition() throws Exception {
-        //Given
-        List<String> beanDescriptions = Collections.emptyList();
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
-        //When
+
         String[] actual = context.getBeanDefinitionNames();
-        //Then
+
         String[] expected = {};
         assertArrayEquals(expected, actual);
     }
@@ -58,20 +68,21 @@ public class ApplicationContextTest {
     public void getBeanDefinitionNamesWithSeveralBeanDefinition() throws Exception {
         String beanName1 = "First bean";
         String beanName2 = "Second bean";
-        List<String> beanDescriptions = Arrays.asList(beanName1, beanName2);
-        Config config = new JavaMapConfig( beanDescriptions);
+        beanDescriptions.put(beanName1, TestBean.class);
+        beanDescriptions.put(beanName2, TestBean.class);
+        Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
         String[] actual = context.getBeanDefinitionNames();
 
-        String[] expected = {beanName1, beanName2};
+        String[] expected = {beanName2, beanName1};
         assertArrayEquals(expected, actual);
     }
 
     @Test
     public void getBeanWithOneBeanDefinitionIsNotNull() throws Exception {
         String beanName = "First bean";
-        List<String> beanDescriptions = Arrays.asList(beanName);
+        beanDescriptions.put(beanName, TestBean.class);
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
@@ -84,20 +95,17 @@ public class ApplicationContextTest {
     public void getBeanWithOneBeanDefinition() throws Exception {
         String beanName = "First bean";
         Class<TestBean> beanType = TestBean.class;
-
-        //TODO  replace list with map
-        //List<String> beanDescriptions = Arrays.asList(beanName);
         Map<String, Class<?>> beanDescriptions = new HashMap<String, Class<?>>(){{
-                put(beanName, beanType);
-            }};
-
+            put(beanName, beanType);
+        }};
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean = (TestBean) context.getBean(beanName);
+        TestBean bean = context.getBean(beanName);
 
-
-        assertNotNull(bean);
+        assertEquals(beanDescriptions.get(beanName).getSimpleName(), bean.getClass().getSimpleName());
     }
 
+    static class TestBean {
+    }
 }

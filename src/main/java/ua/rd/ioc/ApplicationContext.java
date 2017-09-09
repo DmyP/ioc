@@ -3,7 +3,6 @@ package ua.rd.ioc;
 import ua.rd.exceprions.NoSuchBeanException;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 public class ApplicationContext implements Context {
@@ -14,7 +13,7 @@ public class ApplicationContext implements Context {
     }
 
     public ApplicationContext() {
-        beanDefinitions = Config.EMPTY_BEANDEFINITION; //new BeanDefinition[0];
+        beanDefinitions = Config.BEAN_DEFINITIONS;
     }
 
 
@@ -24,12 +23,11 @@ public class ApplicationContext implements Context {
                 .filter(bd -> bd.getBeanName().equals(beanName))
                 .findAny();
 
-        return (T)bean
+        return (T) bean
                 .map(BeanDefinition::getBeanType)
                 .map(this::newInstance)
-                .orElse(null);
+                .orElseThrow(NoSuchBeanException::new);
     }
-
 
     private <T> T newInstance(Class<T> cl){
         try {
@@ -41,11 +39,8 @@ public class ApplicationContext implements Context {
     }
 
     public String[] getBeanDefinitionNames(){
-
-
         return Arrays.stream(beanDefinitions)
                 .map(BeanDefinition::getBeanName).toArray(String[]::new);
-
     }
 
 }

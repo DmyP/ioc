@@ -1,8 +1,6 @@
 package ua.rd.ioc;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 public class JavaMapConfig implements Config {
     private Map<String, Class<?>> beanDescriptions;
@@ -15,9 +13,24 @@ public class JavaMapConfig implements Config {
     public BeanDefinition[] beanDefinitions() {
         BeanDefinition[] beanDefinitions =
                 beanDescriptions.entrySet().stream()
-                        .map(Map.Entry::getValue)
+                        .map(bean -> getBeanDefinition(bean.getKey(), bean.getValue()))
                         .toArray(BeanDefinition[]::new);
         return beanDefinitions;
     }
+
+    private BeanDefinition getBeanDefinition(String name, Class<?> type) {
+        return new BeanDefinition() {
+            @Override
+            public String getBeanName() {
+                return name;
+            }
+
+            @Override
+            public Class<?> getBeanType() {
+                return type;
+            }
+        };
+    }
 }
+
 

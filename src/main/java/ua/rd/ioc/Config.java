@@ -1,8 +1,8 @@
 package ua.rd.ioc;
 
+@FunctionalInterface
 public interface Config {
-    BeanDefinition[] EMPTY_BEANDEFINITION = new BeanDefinition[0];
+    BeanDefinition[] BEAN_DEFINITIONS = new BeanDefinition[0];
 
     BeanDefinition[] beanDefinitions();
-
 }
