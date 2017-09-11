@@ -1,8 +1,11 @@
 package ua.rd.ioc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @FunctionalInterface
 public interface Config {
-    BeanDefinition[] BEAN_DEFINITIONS = new BeanDefinition[0];
+    List<BeanDefinition> BEAN_DEFINITIONS = new ArrayList<>();
 
-    BeanDefinition[] beanDefinitions();
+    List<BeanDefinition> beanDefinitions();
 }

@@ -1,7 +1,7 @@
 package ua.rd.ioc;
 
 public interface Context {
-    <T> T getBean(String beanName);
+    <T> Object getBean(String beanName);
 
     String[] getBeanDefinitionNames();
 }
