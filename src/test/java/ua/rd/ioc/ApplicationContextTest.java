@@ -197,6 +197,46 @@ public class ApplicationContextTest {
         assertNotSame(bean1, bean2);
     }
 
+    @Test
+    public void getBeanWithDependentBeans() throws Exception {
+        Map<String, Map<String,Object>> beanDescriptions = new HashMap<String, Map<String,Object>>(){{
+            put("testBean",
+                    new HashMap<String, Object>(){{
+                        put("type", TestBean.class);
+                        put("isPrototype", false);
+                    }});
+            put("testBeanWithConstructor",
+                    new HashMap<String, Object>(){{
+                        put("type", TestBeanWithConstructor.class);
+                        put("isPrototype", false);
+                    }});
+        }};
+        Config config = new JavaMapConfig(beanDescriptions);
+        Context context = new ApplicationContext(config);
+
+        TestBeanWithConstructor bean = (TestBeanWithConstructor) context.getBean("testBeanWithConstructor");
+
+        assertNotNull(bean);
+    }
+
     static class TestBean {
+    }
+
+    static class TestBeanWithConstructor {
+        private TestBean testBean;
+
+        public TestBeanWithConstructor(TestBean testBean) {
+            this.testBean = testBean;
+        }
+    }
+
+    static class TestBeanWithConstructorTwoParams {
+        private TestBean testBean1;
+        private TestBean testBean2;
+
+        public TestBeanWithConstructorTwoParams(TestBean testBean1, TestBean testBean2) {
+            this.testBean1 = testBean1;
+            this.testBean2 = testBean2;
+        }
     }
 }

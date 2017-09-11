@@ -2,6 +2,7 @@ package ua.rd.ioc;
 
 import ua.rd.exceprions.NoSuchBeanException;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,11 +46,34 @@ public class ApplicationContext implements Context {
     }
 
     private Object createNewBeanInstance(BeanDefinition bd) {
-            try {
-                return bd.getBeanType().newInstance();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        Class<?> type = bd.getBeanType();
+        Constructor<?> constructor = type.getDeclaredConstructors()[0];
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        Object newBean = null;
+        if (constructor.getParameterCount() == 0) {
+            newBean = createBeanWithDefaultConstructor(type);
+        } else {
+            newBean = createBeanWithConstructorWithParams(type);
+        }
+        return newBean;
+    }
+
+    private Object createBeanWithConstructorWithParams(Class<?> type) {
+        Constructor<?> constructor = type.getDeclaredConstructors()[0];
+        Class<?>[] parameterTypes = constructor.getParameterTypes();
+        //TODO
+        //получить масив параметров берем тип,  тип преобразовываем в масив строк, переобр первую букву в маленькую
+        return null;
+    }
+
+    public Object createBeanWithDefaultConstructor(Class<?> type){
+       Object newBean;
+       try {
+           newBean = type.newInstance();
+       } catch (InstantiationException | IllegalAccessException e) {
+           throw new RuntimeException(e);
+       }
+       return newBean;
     }
 
     public String[] getBeanDefinitionNames(){
