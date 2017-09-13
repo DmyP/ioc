@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ua.rd.exceprions.NoSuchBeanException;
+import ua.rd.ioc.annotations.Benchmark;
+import ua.rd.ioc.annotations.MyPostConstruct;
 
 import java.util.*;
 
@@ -219,7 +221,84 @@ public class ApplicationContextTest {
         assertNotNull(bean);
     }
 
+    @Test
+    public void getBeanWithDependedBeansWithTwoParam() throws Exception {
+
+        Map<String, Map<String, Object>> beanDescriptions =
+                new HashMap<String, Map<String, Object>>() {{
+                    put("testBean",
+                            new HashMap<String, Object>() {{
+                                put("type", TestBean.class);
+                                put("isPrototype", false);
+                            }});
+                    put("testBeanWithConstructorWithTwoParams",
+                            new HashMap<String, Object>() {{
+                                put("type", TestBeanWithConstructorTwoParams.class);
+                                put("isPrototype", false);
+                            }});
+                }};
+
+        Config config = new JavaMapConfig(beanDescriptions);
+        Context context = new ApplicationContext(config);
+
+        TestBeanWithConstructorTwoParams bean = (TestBeanWithConstructorTwoParams) context.getBean("testBeanWithConstructorWithTwoParams");
+
+        assertNotNull(bean);
+    }
+
+    @Test
+    public void getBeanCallInitMethod() throws Exception {
+        Map<String, Map<String,Object>> beanDescriptions = new HashMap<String, Map<String,Object>>(){{
+            put("testBean",
+                    new HashMap<String, Object>(){{
+                        put("type", TestBean.class);
+                        put("isPrototype", false);
+                    }});
+        }};
+        Config config = new JavaMapConfig(beanDescriptions);
+        Context context = new ApplicationContext(config);
+
+    TestBean bean = (TestBean) context.getBean("testBean");
+    assertEquals("initialized", bean.initValue);
+    }
+
+    @Test
+    public void getBeanCallPostConstructMethod() throws Exception {
+        Map<String, Map<String,Object>> beanDescriptions = new HashMap<String, Map<String,Object>>(){{
+            put("testBean",
+                    new HashMap<String, Object>(){{
+                        put("type", TestBean.class);
+                        put("isPrototype", false);
+                    }});
+        }};
+        Config config = new JavaMapConfig(beanDescriptions);
+        Context context = new ApplicationContext(config);
+
+        TestBean bean = (TestBean) context.getBean("testBean");
+        assertEquals("initializedByPostConstruct", bean.postConstructValue);
+    }
+
     static class TestBean {
+        public String initValue;
+        public String postConstructValue;
+
+        public void init() {
+            initValue = "initialized";
+        }
+
+        @MyPostConstruct
+        public void postConstruct() {
+            postConstructValue = "initializedByPostConstruct";
+        }
+
+        @Benchmark
+        public String methodToBenchmark(String str) {
+            if (str != null) {
+                return null;
+            }
+            return new StringBuilder(str).reverse().toString();
+
+        }
     }
 
     static class TestBeanWithConstructor {

@@ -8,10 +8,10 @@ import java.util.List;
 public class InMemTweetRepository implements TweetRepository {
     private List<Tweet> tweets;
 
-    {
+    public void init(){
         tweets = Arrays.asList(
-          new Tweet(1L, "First Message", null),
-          new Tweet(2L, "Second Message", null)
+                new Tweet(1L, "First Message", null),
+                new Tweet(2L, "Second Message", null)
         );
     }
 

@@ -32,6 +32,7 @@ public class IoCRunner {
         TweetRepository tweetRepository = (TweetRepository) context.getBean("tweetRepository");
         TweetService tweetService = (TweetService) context.getBean("tweetService");
 
+        System.out.println(tweetService.getClass());
         System.out.println(tweetRepository.allTweets());
         System.out.println(tweetService.allTweets());
 
