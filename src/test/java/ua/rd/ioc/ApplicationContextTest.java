@@ -291,7 +291,7 @@ public class ApplicationContextTest {
             postConstructValue = "initializedByPostConstruct";
         }
 
-        @Benchmark
+        @Benchmark(enabled = false)
         public String methodToBenchmark(String str) {
             if (str != null) {
                 return null;
