@@ -1,4 +1,4 @@
-package ua.rd.ioc.annotations;
+package ua.rd.ioc;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
