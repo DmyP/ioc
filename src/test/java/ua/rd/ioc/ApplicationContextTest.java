@@ -3,6 +3,8 @@ package ua.rd.ioc;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import ua.rd.annotations.Benchmark;
+import ua.rd.annotations.MyPostConstruct;
 import ua.rd.exceptions.NoSuchBeanException;
 
 import java.util.*;

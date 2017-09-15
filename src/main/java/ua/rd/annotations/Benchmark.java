@@ -1,4 +1,4 @@
-package ua.rd.ioc;
+package ua.rd.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,6 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface MyPostConstruct {
+public @interface Benchmark {
+    boolean enabled() default true;
 }

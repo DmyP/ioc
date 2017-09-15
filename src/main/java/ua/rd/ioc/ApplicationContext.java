@@ -1,5 +1,7 @@
 package ua.rd.ioc;
 
+import ua.rd.annotations.Benchmark;
+import ua.rd.annotations.MyPostConstruct;
 import ua.rd.exceptions.NoSuchBeanException;
 
 import java.lang.reflect.*;
