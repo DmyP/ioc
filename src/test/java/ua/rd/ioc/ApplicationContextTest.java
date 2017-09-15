@@ -74,7 +74,6 @@ public class ApplicationContextTest {
 
     @Test
     public void getBeanDefinitionNamesWithSeveralBeanDefinition() throws Exception {
-        String beanName = "First bean";
         String beanName1 = "First bean";
         String beanName2 = "Second bean";
         beanDescriptions.put(beanName1, TestBean.class);
@@ -131,7 +130,7 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean = (TestBean) context.getBean(beanName);
+        BeanInterface bean = (BeanInterface) context.getBean(beanName);
 
         assertNotNull(bean);
     }
@@ -149,8 +148,8 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean1 = (TestBean) context.getBean(beanName);
-        TestBean bean2 = (TestBean) context.getBean(beanName);
+        BeanInterface bean1 = (BeanInterface) context.getBean(beanName);
+        BeanInterface bean2 = (BeanInterface) context.getBean(beanName);
 
         assertSame(bean1, bean2);
     }
@@ -169,8 +168,8 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean1 = (TestBean) context.getBean(beanName);
-        TestBean bean2 = (TestBean) context.getBean(beanName);
+        BeanInterface bean1 = (BeanInterface) context.getBean(beanName);
+        BeanInterface bean2 = (BeanInterface) context.getBean(beanName);
 
         assertNotSame(bean1, bean2);
     }
@@ -193,8 +192,8 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean1 = (TestBean) context.getBean(beanName1);
-        TestBean bean2 = (TestBean) context.getBean(beanName2);
+        BeanInterface bean1 = (BeanInterface) context.getBean(beanName1);
+        BeanInterface bean2 = (BeanInterface) context.getBean(beanName2);
 
         assertNotSame(bean1, bean2);
     }
@@ -216,7 +215,7 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean = (TestBean) context.getBean("testBean");
+        BeanInterface bean = (BeanInterface) context.getBean("testBean");
 
         assertNotNull(bean);
     }
@@ -241,7 +240,7 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean = (TestBean) context.getBean("testBean");
+        BeanInterface bean = (BeanInterface) context.getBean("testBean");
 
         assertNotNull(bean);
     }
@@ -258,8 +257,8 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean = (TestBean) context.getBean("testBean");
-        assertEquals("initialized", bean.initValue);
+        BeanInterface bean = (BeanInterface) context.getBean("testBean");
+        assertEquals("initialized", bean.initValue());
     }
 
     @Test
@@ -274,8 +273,8 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        TestBean bean = (TestBean) context.getBean("testBean");
-        assertEquals("initializedByPostConstruct", bean.postConstructValue);
+        BeanInterface bean = (BeanInterface) context.getBean("testBean");
+        assertEquals("initializedByPostConstruct", bean.postConstructValue());
     }
 
     @Test
@@ -293,24 +292,42 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        BeanInterface bean = (BeanInterface) context.getBean("testBeanBenchmark");
+        BeanBenchmarkInterface bean = (BeanBenchmarkInterface) context.getBean("testBeanBenchmark");
 
         assertEquals("ytrewq", bean.benchmarkMethod("qwerty"));
     }
 
     public interface BeanInterface {
+        String postConstructValue();
+        String initValue();
+    }
+
+    public interface BeanBenchmarkInterface extends BeanInterface{
         String benchmarkMethod(String str);
     }
 
-    static class TestBeanBenchmark implements BeanInterface {
+    static class TestBeanBenchmark implements BeanBenchmarkInterface {
+        String initValue;
+        String postConstructValue;
+
         @Override
         @Benchmark
         public String benchmarkMethod(String str) {
             return new StringBuilder(str).reverse().toString();
         }
+
+        @Override
+        public String postConstructValue() {
+            return postConstructValue;
+        }
+
+        @Override
+        public String initValue() {
+            return initValue;
+        }
     }
 
-    static class TestBean{
+    static class TestBean implements BeanInterface{
         String initValue;
         String postConstructValue;
 
@@ -323,23 +340,59 @@ public class ApplicationContextTest {
             initValue = "initializedByPostConstruct";
             postConstructValue = "initializedByPostConstruct";
         }
+
+        @Override
+        public String postConstructValue() {
+            return postConstructValue;
+        }
+
+        @Override
+        public String initValue() {
+            return initValue;
+        }
     }
 
-    static class TestBeanWithConstructor {
+    static class TestBeanWithConstructor implements BeanInterface{
+        String initValue;
+        String postConstructValue;
+
         private TestBean testBean;
 
         TestBeanWithConstructor(TestBean testBean) {
             this.testBean = testBean;
         }
+
+        @Override
+        public String postConstructValue() {
+            return postConstructValue;
+        }
+
+        @Override
+        public String initValue() {
+            return initValue;
+        }
     }
 
-    static class TestBeanWithConstructorTwoParams {
+    static class TestBeanWithConstructorTwoParams implements BeanInterface{
+        String initValue;
+        String postConstructValue;
+
         private TestBean testBean1;
         private TestBean testBean2;
 
         public TestBeanWithConstructorTwoParams(TestBean testBean1, TestBean testBean2) {
             this.testBean1 = testBean1;
             this.testBean2 = testBean2;
+        }
+
+        @Override
+        public String postConstructValue() {
+            return postConstructValue;
+        }
+
+        @Override
+        public String initValue() {
+            return initValue;
         }
     }
 }
