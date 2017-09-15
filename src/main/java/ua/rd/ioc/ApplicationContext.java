@@ -47,7 +47,7 @@ public class ApplicationContext implements Context {
         beanBuilder.createNewBeanInstance();
         beanBuilder.callPostConstructAnnotatedMethod();
         beanBuilder.callInitMethod();
-        beanBuilder.createBenchmarkProxy();
+        beanBuilder.createBenchmarkProxyForAnnotatedBeans();
 
         Object bean = beanBuilder.build();
 
@@ -96,29 +96,33 @@ public class ApplicationContext implements Context {
             }
         }
 
+        private void createBenchmarkProxyForAnnotatedBeans() {
+            Class<?> beanClass = bean.getClass();
+            Method[] beanDeclaredMethods = beanClass.getDeclaredMethods();
+            for (Method m : beanDeclaredMethods) {
+                if (m.isAnnotationPresent(Benchmark.class) && m.getAnnotation(Benchmark.class).enabled()) {
+                    bean = Proxy.newProxyInstance(
+                            beanClass.getClassLoader(),
+                            beanClass.getInterfaces(),
+                            new MyInvocationHandler(bean));
+                }
+            }
+        }
 
-        private void createBenchmarkProxy() {
-            Object newBean = bean;
-            if(Stream.of(bean.getClass().getDeclaredMethods())
-                    .anyMatch(m -> m.isAnnotationPresent(Benchmark.class) &&
-                            m.getAnnotation(Benchmark.class).enabled())) {
-                Class<?> beanType = bean.getClass();
-                bean =  Proxy.newProxyInstance(beanType.getClassLoader(),
-                        beanType.getInterfaces(),
-                        (proxy, method, args) -> {
-                            Method beanMethod = beanType.getDeclaredMethod(method.getName(),
-                                    method.getParameterTypes());
-                            if (beanMethod.isAnnotationPresent(Benchmark.class) &&
-                                    beanMethod.getAnnotation(Benchmark.class).enabled()) {
-                                long start = System.nanoTime();
-                                Object objectToReturn = method.invoke(newBean, args);
-                                long finish = System.nanoTime();
-                                System.out.println(finish - start);
-                                return objectToReturn;
-                            } else {
-                                return method.invoke(newBean, args);
-                            }
-                        });
+        class MyInvocationHandler implements InvocationHandler {
+            private Object proxyBean;
+
+            public MyInvocationHandler(Object proxyBean) {
+                this.proxyBean = proxyBean;
+            }
+
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                long start = System.nanoTime();
+                Object object = method.invoke(proxyBean, args);
+                long result = System.nanoTime() - start;
+                System.out.println(result);
+                return object;
             }
         }
 
