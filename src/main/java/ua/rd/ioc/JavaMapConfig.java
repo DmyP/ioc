@@ -12,10 +12,12 @@ public class JavaMapConfig implements Config {
     }
 
     @Override
-    public List<BeanDefinition> beanDefinitions() {
-        return beanDescriptions.entrySet().stream()
-                        .map(this::getBeanDefinition)
-                        .collect(Collectors.toList());
+    public BeanDefinition[] beanDefinitions() {
+        BeanDefinition[] beanDefinitions =
+                beanDescriptions.entrySet().stream()
+                        .map((e) -> getBeanDefinition(e))
+                        .toArray(BeanDefinition[]::new);
+        return beanDefinitions;
     }
 
     private BeanDefinition getBeanDefinition(Map.Entry<String, Map<String,Object>> descriptionEntry) {

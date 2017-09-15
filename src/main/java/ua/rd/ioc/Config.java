@@ -5,7 +5,8 @@ import java.util.List;
 
 @FunctionalInterface
 public interface Config {
-    List<BeanDefinition> BEAN_DEFINITIONS = new ArrayList<>();
 
-    List<BeanDefinition> beanDefinitions();
+    BeanDefinition[] EMPTY_BEAN_DEfINITION = new BeanDefinition[0];
+
+    BeanDefinition[] beanDefinitions();
 }
