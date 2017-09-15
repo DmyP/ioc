@@ -9,14 +9,21 @@ import java.util.Arrays;
 
 public class SpringXMLConfigRunner {
     public static void main(String[] args) {
-        ConfigurableApplicationContext appContext =
-                new ClassPathXmlApplicationContext("appContext.xml");
-        System.out.println(Arrays.toString(appContext.getBeanDefinitionNames()));
-        BeanDefinition bd = appContext.getBeanFactory().getBeanDefinition("tweetService");
+        ConfigurableApplicationContext repoContext =
+                new ClassPathXmlApplicationContext("repoContext.xml");
+        ConfigurableApplicationContext serviceContext =
+                new ClassPathXmlApplicationContext(new String[]{"serviceContext.xml"}, repoContext);
+        System.out.println(Arrays.toString(repoContext.getBeanDefinitionNames()));
+        System.out.println(Arrays.toString(serviceContext.getBeanDefinitionNames()));
 
-        TweetService tweetService = (TweetService) appContext.getBean("tweetService");
-        appContext.refresh();
-        System.out.println(tweetService.allTweets());
+
+
+        System.out.println(serviceContext.getBean("tweet"));
+        //TweetService tweetService = (TweetService) serviceContext.getBean("tweetService");
+        //System.out.println(tweetService.allTweets());
+
+        serviceContext.close();
+        repoContext.close();
 
     }
 }
