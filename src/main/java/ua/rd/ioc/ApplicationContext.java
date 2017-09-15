@@ -19,7 +19,7 @@ public class ApplicationContext implements Context {
     }
 
     private void initContext(List<BeanDefinition> beanDefinitions) {
-        beanDefinitions.stream().forEach(bd -> getBean(bd.getBeanName()));
+        beanDefinitions.forEach(bd -> getBean(bd.getBeanName()));
     }
 
     public ApplicationContext() {
