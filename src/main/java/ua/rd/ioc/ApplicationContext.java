@@ -30,10 +30,10 @@ public class ApplicationContext implements Context {
     @Override
     public Object getBean(String beanName) {
         Object bean = beans.get(beanName);
-        if(bean == null) {
+        if (bean == null) {
             BeanDefinition beanDefinition = getBeanDefinitionByName(beanName);
             bean = createNewBean(beanDefinition);
-            if(!beanDefinition.isPrototype()) {
+            if (!beanDefinition.isPrototype()) {
                 beans.put(beanName, bean);
             }
         }
@@ -41,9 +41,8 @@ public class ApplicationContext implements Context {
     }
 
 
-
     private Object createNewBean(BeanDefinition beanDefinition) {
-        BeanBuilder  beanBuilder = new BeanBuilder(beanDefinition);
+        BeanBuilder beanBuilder = new BeanBuilder(beanDefinition);
         beanBuilder.createNewBeanInstance();
         beanBuilder.callPostConstructAnnotatedMethod();
         beanBuilder.callInitMethod();
@@ -65,8 +64,8 @@ public class ApplicationContext implements Context {
 
         private void createNewBeanInstance() {
             Class<?> type = beanDefinition.getBeanType();
-            if(type.getDeclaredConstructors()[0].getParameterCount() == 0) {
-                bean =  createBeanWithDefaultConstructor(type);
+            if (type.getDeclaredConstructors()[0].getParameterCount() == 0) {
+                bean = createBeanWithDefaultConstructor(type);
             } else {
                 bean = createBeanWithParams(type);
             }
@@ -90,23 +89,20 @@ public class ApplicationContext implements Context {
             try {
                 Method intiMethod = beanType.getMethod("init");
                 intiMethod.invoke(bean);
-            } catch (NoSuchMethodException e) {}
-            catch (InvocationTargetException | IllegalAccessException e) {
+            } catch (NoSuchMethodException e) {
+            } catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
 
         private void createBenchmarkProxyForAnnotatedBeans() {
             Class<?> beanClass = bean.getClass();
-            Method[] beanDeclaredMethods = beanClass.getDeclaredMethods();
-            for (Method m : beanDeclaredMethods) {
-                if (m.isAnnotationPresent(Benchmark.class) && m.getAnnotation(Benchmark.class).enabled()) {
-                    bean = Proxy.newProxyInstance(
+            Arrays.stream(beanClass.getDeclaredMethods())
+                    .filter(m -> m.isAnnotationPresent(Benchmark.class) && m.getAnnotation(Benchmark.class).enabled())
+                    .forEach(m -> bean = Proxy.newProxyInstance(
                             beanClass.getClassLoader(),
                             beanClass.getInterfaces(),
-                            new MyInvocationHandler(bean));
-                }
-            }
+                            new MyInvocationHandler(bean)));
         }
 
         class MyInvocationHandler implements InvocationHandler {

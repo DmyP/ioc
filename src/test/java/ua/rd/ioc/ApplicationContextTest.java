@@ -201,7 +201,7 @@ public class ApplicationContextTest {
     @Test
     public void getBeanWithDependentBeans() throws Exception {
         Map<String, Map<String,Object>> beanDescriptions = new HashMap<String, Map<String,Object>>(){{
-            put("testBean",
+            put("beanInterface",
                     new HashMap<String, Object>(){{
                         put("type", TestBean.class);
                         put("isPrototype", false);
@@ -215,7 +215,7 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        BeanInterface bean = (BeanInterface) context.getBean("testBean");
+        BeanInterface bean = (BeanInterface) context.getBean("testBeanWithConstructor");
 
         assertNotNull(bean);
     }
@@ -225,7 +225,7 @@ public class ApplicationContextTest {
 
         Map<String, Map<String, Object>> beanDescriptions =
                 new HashMap<String, Map<String, Object>>() {{
-                    put("testBean",
+                    put("beanInterface",
                             new HashMap<String, Object>() {{
                                 put("type", TestBean.class);
                                 put("isPrototype", false);
@@ -240,7 +240,7 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        BeanInterface bean = (BeanInterface) context.getBean("testBean");
+        BeanInterface bean = (BeanInterface) context.getBean("testBeanWithConstructorWithTwoParams");
 
         assertNotNull(bean);
     }
@@ -292,7 +292,7 @@ public class ApplicationContextTest {
         Config config = new JavaMapConfig(beanDescriptions);
         Context context = new ApplicationContext(config);
 
-        BeanBenchmarkInterface bean = (BeanBenchmarkInterface) context.getBean("testBeanBenchmark");
+        BeanInterface bean = (BeanInterface) context.getBean("testBeanBenchmark");
 
         assertEquals("ytrewq", bean.benchmarkMethod("qwerty"));
     }
@@ -300,13 +300,13 @@ public class ApplicationContextTest {
     public interface BeanInterface {
         String postConstructValue();
         String initValue();
+        default String benchmarkMethod(String str){
+            return "";
+        }
+
     }
 
-    public interface BeanBenchmarkInterface extends BeanInterface{
-        String benchmarkMethod(String str);
-    }
-
-    static class TestBeanBenchmark implements BeanBenchmarkInterface {
+    static class TestBeanBenchmark implements BeanInterface {
         String initValue;
         String postConstructValue;
 
@@ -341,6 +341,11 @@ public class ApplicationContextTest {
             postConstructValue = "initializedByPostConstruct";
         }
 
+
+        public String benchmarkMethod(String str) {
+            return new StringBuilder(str).reverse().toString();
+        }
+
         @Override
         public String postConstructValue() {
             return postConstructValue;
@@ -356,9 +361,9 @@ public class ApplicationContextTest {
         String initValue;
         String postConstructValue;
 
-        private TestBean testBean;
+        private BeanInterface testBean;
 
-        TestBeanWithConstructor(TestBean testBean) {
+        TestBeanWithConstructor(BeanInterface testBean) {
             this.testBean = testBean;
         }
 
@@ -377,10 +382,10 @@ public class ApplicationContextTest {
         String initValue;
         String postConstructValue;
 
-        private TestBean testBean1;
-        private TestBean testBean2;
+        private BeanInterface testBean1;
+        private BeanInterface testBean2;
 
-        public TestBeanWithConstructorTwoParams(TestBean testBean1, TestBean testBean2) {
+        public TestBeanWithConstructorTwoParams(BeanInterface testBean1, BeanInterface testBean2) {
             this.testBean1 = testBean1;
             this.testBean2 = testBean2;
         }
