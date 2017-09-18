@@ -1,35 +1,46 @@
 package ua.rd.services;
 
 import ua.rd.domain.Tweet;
+import ua.rd.ioc.Context;
 import ua.rd.repository.TweetRepository;
-////
-class LazyTweetProxy extends Tweet{
-    String bean;
 
-    public LazyTweetProxy(String bean) {
-        this.bean = bean;
+class PrototypeTweetProxy implements TweetService {
+
+    private Context context;
+    private TweetService tweetService;
+
+    public PrototypeTweetProxy(TweetService tweetService, Context context) {
+        this.context = context;
     }
 
-    Tweet getInstance(){
-        appContext.getBean(bean);
-    }
+    @Override
+    public Iterable<Tweet> allTweets() {
+        return tweetService.allTweets();
     }
 
+    @Override
+    public TweetRepository getRepository() {
+        return tweetService.getRepository();
+    }
+
+    @Override
+    public Tweet newTweet() {
+        return (Tweet) context.getBean("tweet");
+    }
+}
 
 public class SimpleTweetService implements TweetService {
-    private final TweetRepository tweetRepository;
-    private Tweet tweet ; // = new LazyTweetProxy("tweet").getInstance(); создать прокси SimpleTweetService по имени метода
 
-    public SimpleTweetService(TweetRepository tweetRepository, Tweet tweet) {
-        this.tweetRepository = tweetRepository;
+    private final TweetRepository tweetRepository;
+    private Tweet tweet;
+
+    public void setTweet(Tweet tweet) {
         this.tweet = tweet;
-    //TODO if tweet prototype in newTweet return new tweet
-        //if prototype inject proxy or class
     }
 
-//    public SimpleTweetService(TweetRepository tweetRepository) {
-//        this.tweetRepository = tweetRepository;
-//    }
+    public SimpleTweetService(TweetRepository tweetRepository) {
+        this.tweetRepository = tweetRepository;
+    }
 
     @Override
     public Iterable<Tweet> allTweets() {
@@ -37,7 +48,7 @@ public class SimpleTweetService implements TweetService {
     }
 
     @Override
-    public TweetRepository getTweetRepository() {
+    public TweetRepository getRepository() {
         return tweetRepository;
     }
 
@@ -45,9 +56,4 @@ public class SimpleTweetService implements TweetService {
     public Tweet newTweet() {
         return tweet;
     }
-
-    public void setTweet(Tweet tweet) {
-        this.tweet = tweet;
-    }
-
 }

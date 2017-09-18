@@ -5,7 +5,7 @@ import ua.rd.repository.TweetRepository;
 
 public interface TweetService {
     Iterable<Tweet> allTweets();
-    TweetRepository getTweetRepository();
+    TweetRepository getRepository();
     Tweet newTweet();
 
 }

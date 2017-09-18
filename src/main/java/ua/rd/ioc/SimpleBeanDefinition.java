@@ -11,9 +11,6 @@ public class SimpleBeanDefinition implements BeanDefinition {
         this.isPrototype = isPrototype;
     }
 
-    public SimpleBeanDefinition() {
-    }
-
     @Override
         public String getBeanName() {
             return beanName;
