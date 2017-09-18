@@ -3,6 +3,7 @@ package ua.rd.ioc;
 import ua.rd.annotations.Benchmark;
 import ua.rd.annotations.MyPostConstruct;
 import ua.rd.exceptions.NoSuchBeanException;
+import ua.rd.services.TweetService;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -50,6 +51,9 @@ public class ApplicationContext implements Context {
         beanBuilder.callPostConstructAnnotatedMethod();
         beanBuilder.callInitMethod();
         beanBuilder.createBenchmarkProxyForAnnotatedBeans();
+        if(beanDefinition.getBeanName().equals("tweetService")){
+            beanBuilder.createTweetServiceProxy();
+        }
 
         Object bean = beanBuilder.build();
 
@@ -108,6 +112,10 @@ public class ApplicationContext implements Context {
                             new MyInvocationHandler(bean)));
         }
 
+        public void createTweetServiceProxy() {
+            bean = new PrototypeTweetServiceProxy((TweetService) bean, ApplicationContext.this).createProxy();
+        }
+
         class MyInvocationHandler implements InvocationHandler {
             private Object proxyBean;
 
@@ -117,9 +125,9 @@ public class ApplicationContext implements Context {
 
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                long start = System.nanoTime();
+                Long start = System.nanoTime();
                 Object object = method.invoke(proxyBean, args);
-                long result = System.nanoTime() - start;
+                Long result = System.nanoTime() - start;
                 System.out.println(result);
                 return object;
             }

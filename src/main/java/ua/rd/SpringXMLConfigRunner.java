@@ -13,14 +13,16 @@ public class SpringXMLConfigRunner {
                 new ClassPathXmlApplicationContext("repoContext.xml");
         ConfigurableApplicationContext serviceContext =
                 new ClassPathXmlApplicationContext(new String[]{"serviceContext.xml"}, repoContext);
-        System.out.println(Arrays.toString(repoContext.getBeanDefinitionNames()));
-        System.out.println(Arrays.toString(serviceContext.getBeanDefinitionNames()));
+        System.out.println("repo context - " + Arrays.toString(repoContext.getBeanDefinitionNames()));
+        System.out.println("service context - " + Arrays.toString(serviceContext.getBeanDefinitionNames()));
 
         TweetService tweetService = (TweetService) serviceContext.getBean("tweetService");
+        System.out.println(tweetService.getClass());
 
 
         System.out.println(tweetService.newTweet() == tweetService.newTweet());
-
+        System.out.println(serviceContext.getBean("tweet"));
+        System.out.println(serviceContext.getBean("user"));
         serviceContext.close();
         repoContext.close();
 

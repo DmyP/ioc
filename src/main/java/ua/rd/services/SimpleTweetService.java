@@ -1,15 +1,20 @@
 package ua.rd.services;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import ua.rd.domain.Tweet;
 import ua.rd.ioc.Context;
 import ua.rd.repository.TweetRepository;
 
-class PrototypeTweetProxy implements TweetService {
+class PrototypeTweetServiceProxy implements TweetService{
 
     private Context context;
     private TweetService tweetService;
 
-    public PrototypeTweetProxy(TweetService tweetService, Context context) {
+    public PrototypeTweetServiceProxy(TweetService tweetService, Context context) {
         this.context = context;
     }
 
@@ -27,10 +32,13 @@ class PrototypeTweetProxy implements TweetService {
     public Tweet newTweet() {
         return (Tweet) context.getBean("tweet");
     }
+
+
 }
 
-public class SimpleTweetService implements TweetService {
-
+public class SimpleTweetService implements TweetService,
+        InitializingBean, ApplicationContextAware, DisposableBean{
+    private ApplicationContext applicationContext;
     private final TweetRepository tweetRepository;
     private Tweet tweet;
 
@@ -54,6 +62,21 @@ public class SimpleTweetService implements TweetService {
 
     @Override
     public Tweet newTweet() {
-        return tweet;
+        return (Tweet) applicationContext.getBean("tweet");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("afterPropertiesSet");
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("destroy method");
     }
 }

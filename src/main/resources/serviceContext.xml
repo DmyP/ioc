@@ -5,11 +5,30 @@
 
     <!--<import resource="repoContext.xml"/>-->
 
-    <bean name="tweetService" class="ua.rd.services.SimpleTweetService">
-        <constructor-arg ref="tweetRepository"/>
+    <bean name="tweetService" class="ua.rd.services.SimpleTweetService" autowire="constructor">
+        <!--<constructor-arg ref="tweetRepository"/>-->
         <property name="tweet" ref="tweet"/>
+        <lookup-method name="newTweet" bean="tweet"/>
     </bean>
 
-    <bean name="tweet" class="ua.rd.domain.Tweet" scope="prototype"/>
 
+    <bean name="user" class="ua.rd.domain.User" >
+        <constructor-arg>
+            <bean class="ua.rd.domain.Tweet"/>
+        </constructor-arg>
+
+    </bean>
+
+  <!--  <bean name="tw" class="ua.rd.domain.Tweet" init-method="init">
+        <constructor-arg value="Tweet Text"/>
+        <constructor-arg ref="us"/>
+    </bean> -->
+
+
+
+    <bean name="tweet" class="ua.rd.domain.Tweet" scope="prototype"/>
+    <!--<bean name="tweet" class="ua.rd.services.SimpleTweetService"
+          factory-method="newTweet" scope="prototype"/>-->
+    <!--<bean name="tweet" factory-bean="tweetService"
+              factory-method="newTweet"  scope="prototype">-->
    </beans>

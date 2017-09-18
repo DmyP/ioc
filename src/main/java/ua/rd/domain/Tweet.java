@@ -55,4 +55,8 @@ public class Tweet {
                 ", user=" + user +
                 '}';
     }
+
+    private void init() {
+        user.setTweet(this);
+    }
 }
