@@ -4,10 +4,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Lookup;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import ua.rd.annotations.Benchmark;
 import ua.rd.domain.Tweet;
 import ua.rd.ioc.Context;
 import ua.rd.repository.TweetRepository;
@@ -88,8 +90,11 @@ public class SimpleTweetService implements TweetService,
     }
 
     @Override
+    @Lookup
+    @Benchmark
+    //TODO make benchmark work using BFPP
     public Tweet newTweet() {
-        return (Tweet) applicationContext.getBean("tweet");
+        return (Tweet) applicationContext.getBean("abc");
     }
 
     @Override

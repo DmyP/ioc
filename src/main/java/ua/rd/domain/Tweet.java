@@ -1,8 +1,9 @@
 package ua.rd.domain;
 
+import org.springframework.beans.factory.annotation.Value;
 import ua.rd.annotations.MyTweet;
 
-@MyTweet
+//@MyTweet(value = "abc")
 public class Tweet {
     private Long tweetId;
     private String txt;
@@ -46,6 +47,7 @@ public class Tweet {
         return user;
     }
 
+   //@Value("user")
     public void setUser(User user) {
         this.user = user;
     }
