@@ -21,8 +21,8 @@ public class SpringXMLConfigRunner {
 
 
         System.out.println(tweetService.newTweet() == tweetService.newTweet());
-        System.out.println(serviceContext.getBean("tweet"));
-        System.out.println(serviceContext.getBean("user"));
+        System.out.println(tweetService.getClass());
+        System.out.println(tweetService.allTweets());
         serviceContext.close();
         repoContext.close();
 

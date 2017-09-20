@@ -1,34 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <!--<import resource="repoContext.xml"/>-->
+    <context:component-scan base-package="ua.rd.services ua.rd.domain">
+        <context:include-filter type="annotation" expression="ua.rd.annotations.MyTweet"/>
+    </context:component-scan>
 
-    <bean name="tweetService" class="ua.rd.services.SimpleTweetService" autowire="constructor">
-        <!--<constructor-arg ref="tweetRepository"/>-->
-        <property name="tweet" ref="tweet"/>
-        <lookup-method name="newTweet" bean="tweet"/>
-    </bean>
+  <!--  <bean name="tweet" class="ua.rd.domain.Tweet" scope="prototype"/>-->
 
-
-    <bean name="user" class="ua.rd.domain.User" >
-        <constructor-arg>
-            <bean class="ua.rd.domain.Tweet"/>
-        </constructor-arg>
-
-    </bean>
-
-  <!--  <bean name="tw" class="ua.rd.domain.Tweet" init-method="init">
-        <constructor-arg value="Tweet Text"/>
-        <constructor-arg ref="us"/>
-    </bean> -->
-
-
-
-    <bean name="tweet" class="ua.rd.domain.Tweet" scope="prototype"/>
-    <!--<bean name="tweet" class="ua.rd.services.SimpleTweetService"
-          factory-method="newTweet" scope="prototype"/>-->
-    <!--<bean name="tweet" factory-bean="tweetService"
-              factory-method="newTweet"  scope="prototype">-->
    </beans>

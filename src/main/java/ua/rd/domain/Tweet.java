@@ -1,5 +1,8 @@
 package ua.rd.domain;
 
+import ua.rd.annotations.MyTweet;
+
+@MyTweet
 public class Tweet {
     private Long tweetId;
     private String txt;

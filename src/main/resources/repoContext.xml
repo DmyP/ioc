@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context-3.1.xsd
+">
 
-    <bean name="tweetRepository2"
+    <context:component-scan base-package="ua.rd.repository"/>
+
+ <!--
+   <bean name="tweetRepository2"
           class="ua.rd.repository.InMemTweetRepository"
           init-method="init"
     />
@@ -12,11 +20,10 @@
           autowire-candidate="false"
           class="ua.rd.repository.InMemTweetRepository"
           init-method="init">
-        <qualifier></qualifier>
     </bean>
 
     <bean name="tweet" class="ua.rd.domain.Tweet">
         <constructor-arg type="java.lang.String" value="Tweet_repo"/>
         <constructor-arg type="ua.rd.domain.User"><null/></constructor-arg>
-    </bean>
+    </bean>-->
 </beans>
