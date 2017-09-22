@@ -94,7 +94,7 @@ public class SimpleTweetService implements TweetService,
     @Benchmark
     //TODO make benchmark work using BFPP
     public Tweet newTweet() {
-        return (Tweet) applicationContext.getBean("abc");
+        return tweet;
     }
 
     @Override

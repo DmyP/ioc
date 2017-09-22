@@ -12,8 +12,15 @@ public class User {
         this.name = name;
     }
 
-
     public void setTweet(Tweet tweet) {
         this.tweet = tweet;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "tweet=" + tweet +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
